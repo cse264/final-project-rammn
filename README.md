@@ -3,6 +3,8 @@
 ## Due Last day of Class
 ## First report due April 11th 2022
 
+Maximillian Machado, Nicole ElChaar, Alexander Carr, Rachael Bucci, Michael DeMasi
+
 ### Build a web app in a team of 4-5
 
 ### Requirements:
