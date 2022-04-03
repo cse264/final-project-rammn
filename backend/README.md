@@ -11,7 +11,7 @@
 
 1. Move into the base directory of "backend" within the command line.
 2. Activate the Python environment (follow the section titled "Environment Configuration").
-3. Call the flask module by typing: `python -m flask run`
+3. Call the flask module by typing: `Flask run` and `python -m flask run`
 
 ## Installation Instructions:
 
