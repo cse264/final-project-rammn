@@ -48,4 +48,4 @@ Use [PGADMIN](https://www.pgadmin.org/download/) for a free GUI database adminis
 
 ## TODO:
 
-- get database url from the path
+- 

@@ -8,10 +8,10 @@
 ## Run server:
 
 ### Local Deploy:
-1. 
+1. npm run serve
 
 ### Heroku Deploy:
-1. 
+1. npm run build
 
 ## Installation Instructions:
 
@@ -26,4 +26,4 @@
 
 ## TODO:
 
-- get database url from the path
+- 
