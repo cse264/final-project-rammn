@@ -1,4 +1,5 @@
-from RAMMN.main import app as application
+from RAMMN import create_app
  
 if __name__ == "__main__":
-        app = application
+        app = create_app()
+        app.run()
