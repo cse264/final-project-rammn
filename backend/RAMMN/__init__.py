@@ -38,7 +38,7 @@ def create_app(test_config=None):
 
     from .views import sample_page
 
-    app.register_blueprint(sample_page, url_prefix='/views')
+    app.register_blueprint(sample_page, url_prefix='/')
 
     return app
 

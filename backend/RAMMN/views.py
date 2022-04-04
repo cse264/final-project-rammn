@@ -4,7 +4,7 @@ from jinja2 import TemplateNotFound
 sample_page = Blueprint('sample_page', 'sample_page', template_folder='templates')
 
 
-@sample_page.route('/sample')
+@sample_page.route('/')
 def get_sample():
     try:
         return render_template('index.html')
