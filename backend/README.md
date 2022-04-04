@@ -36,6 +36,10 @@ To list the installed packages for the environment, type:
 
 ## Hosting (Heroku):
 
+1. Update requirements by typing: `pip freeze > requirements.txt`.
+2. Stage any changes to the repository to the remote heroku branch.
+3. Push staged changes to trigger heroku deploy.
+
 ## Database (PostgreSQL):
 
 For this project we used the structured query language PostgreSQL. Reasons for using this database model include: relational data model for powerful representaion of data relationships, transaction safe queries, and free remote database access via Heroku.
