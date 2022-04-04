@@ -1,4 +1,4 @@
-from RAMMN.run import app
+from RAMMN.main import app
  
 if __name__ == "__main__":
         app.run()
