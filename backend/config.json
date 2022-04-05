@@ -1,0 +1,15 @@
+{
+    "SECRET_KEY": "dev",
+    "GOOGLE_OAUTH": {
+        "client_id": "23155545422-84dtoft09ciu01ub0kgfqmn4rsfivfg3.apps.googleusercontent.com",
+        "project_id": "rammn-346218",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "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",
+        "javascript_origins": [
+            "https://rammn.herokuapp.com"
+        ]
+    },
+    "DATABASE_URL": "postgres://lcnocbrmucvymo:8c0cf06f1c8f797032d638c03169f309623bb92ea80d1dc61febc8bbe4c7b1b1@ec2-52-3-60-53.compute-1.amazonaws.com:5432/dahaea12a669hl"
+}

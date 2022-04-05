@@ -1,6 +1,6 @@
 git add *
 
-git add ./config.json
+git add -f ./config.json
 
 git commit -m "Deploying to heroku"
 
