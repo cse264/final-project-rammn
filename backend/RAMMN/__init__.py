@@ -15,7 +15,6 @@ def create_app(test_config=None):
 
     if os.path.exists(config_path):
         app.config.from_file(config_path, load=json.load)
-        print(app.config["GOOGLE_OAUTH"]["client_id"])
     else:
         app.config.from_mapping(
             SECRET_KEY='dev',
