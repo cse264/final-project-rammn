@@ -16,7 +16,7 @@
 
 ## Installation Instructions:
 
-1. Type `pip install` (this will get any dependencies)
+1. Type `pip install -e .` (this will get any dependencies)
 
 ## Run tests:
 

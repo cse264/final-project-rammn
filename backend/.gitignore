@@ -1,5 +1,7 @@
 venv/
 
+config.json
+
 *.pyc
 __pycache__/
 
