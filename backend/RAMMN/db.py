@@ -22,7 +22,7 @@ def init_db_command():
 
 def get_db():
     if 'db' not in g:
-        g.db = psycopg2.connect(current_app.config['DATABASE'])
+        g.db = psycopg2.connect(current_app.config['DATABASE_URL'])
 
     return g.db
 
