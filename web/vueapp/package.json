@@ -34,7 +34,8 @@
     "core-js": "^3.19.0",
     "vue": "^3.2.23",
     "vue-router": "^4.0.14",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "yarn": "^1.22.18"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
