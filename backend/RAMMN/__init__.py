@@ -11,21 +11,27 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
+    # check if config file is in current path
     config_path = os.path.join(os.getcwd(), "config.json")
 
+    # check if config file exists
     if os.path.exists(config_path):
+        # use config file to setup app configuration
         app.config.from_file(config_path, load=json.load)
     else:
+        # setup default values for app configuration
         app.config.from_mapping(
             SECRET_KEY='dev',
             DATABASE=os.environ['DATABASE_URL'],
         )
 
+    # set up CORS
     Cors = CORS(app)
 
     CORS(app, resources={r'/*': {'origins': '*'}},
          CORS_SUPPORTS_CREDENTIALS=True)
 
+    # for testing purposes
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -40,14 +46,16 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    # setup db
     from . import db
     db.init_app(app)
 
+    # import auth-routes and register with app
     from . import auth
     app.register_blueprint(auth.bp)
 
+    # get route responsible for serving main page
     from .views import sample_page
-
     app.register_blueprint(sample_page, url_prefix='/')
 
     return app
