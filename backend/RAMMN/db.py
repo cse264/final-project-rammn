@@ -1,8 +1,34 @@
+from lib2to3.pytree import _Results
+from unittest import result
 import psycopg2
+
+import sys
 
 import click
 from flask import current_app, g
-from flask.cli import with_appcontext
+from flask.cli import with_appcontext            
+
+def get_db():
+    if 'db' not in g:
+        try:
+            g.db = psycopg2.connect(current_app.config['DATABASE_URL'])
+        except psycopg2.DatabaseError as e:
+            print(e, file=sys.stderr)
+            raise e
+
+    return g.db
+
+def example_method():
+    """This function is an example on how to execute queries with cursor"""
+    db = get_db()
+
+    query = "SELECT * FROM tb1"
+
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        records = [row for row in cursor.fetchall()]
+        cursor.close()
+        return records
 
 # prepared statements set, functions that execute them
 # pgadmin
@@ -42,14 +68,6 @@ def init_db_command():
     init_db()
     click.echo('Initialized the database.')
 
-# If db is already running, 
-def get_db():
-    if 'db' not in g:
-        g.db = psycopg2.connect(current_app.config['DATABASE'])     # database url
-
-    return g.db
-
-# get_db()
 def close_db(e=None):
     db = g.pop('db', None)
 
