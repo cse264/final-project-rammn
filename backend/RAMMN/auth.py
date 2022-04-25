@@ -1,13 +1,29 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from RAMMN.db import get_db
+from RAMMN.external_auth import AuthenticatorFactory
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+@bp.route('/reddit_callback')
+def reddit_callback():
+
+    error = request.args.get('error', '')
+    if error:
+        return "Error: " + error
+    state = request.args.get('state', '')
+    if not is_valid_state(state):
+    # Uh-oh, this request wasn't started by us!
+        abort(403)
+    code = request.args.get('code')
+    # We'll change this next line in just a moment
+    access_token = get_token(code)
+    return "Your reddit username is: %s" % get_username(access_token)
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -66,6 +82,7 @@ def login():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
+    AuthenticatorFactory("REDDIT", )
 
     if user_id is None:
         g.user = None

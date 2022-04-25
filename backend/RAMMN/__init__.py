@@ -6,6 +6,8 @@ from flask import Flask
 
 from flask_cors import CORS, cross_origin
 
+from backend.RAMMN.external_auth import RedditAuthenticator
+
 
 def create_app(test_config=None):
     # create and configure the app
