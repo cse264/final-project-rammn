@@ -13,17 +13,19 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/reddit_callback')
 def reddit_callback():
 
+    reddit_auth = AuthenticatorFactory().get_authenticator("REDDIT")
+
     error = request.args.get('error', '')
     if error:
         return "Error: " + error
     state = request.args.get('state', '')
     if not is_valid_state(state):
-    # Uh-oh, this request wasn't started by us!
+        # Uh-oh, this request wasn't started by us!
         abort(403)
     code = request.args.get('code')
     # We'll change this next line in just a moment
-    access_token = get_token(code)
-    return "Your reddit username is: %s" % get_username(access_token)
+    access_token = reddit_auth.get_token(code)
+    return "Your reddit username is: %s" % reddit_auth.get_username(access_token)
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -82,7 +84,6 @@ def login():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    AuthenticatorFactory("REDDIT", )
 
     if user_id is None:
         g.user = None
