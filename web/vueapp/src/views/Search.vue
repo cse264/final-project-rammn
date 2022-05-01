@@ -1,8 +1,6 @@
 <template>
   <div>
-    <CRow>
-      
-    </CRow>
+    <CRow></CRow>
   </div>
 </template>
 

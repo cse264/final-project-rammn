@@ -1,14 +1,12 @@
 <template>
   <CFooter>
     <div>
-      <a href="https://coreui.io" target="_blank">CoreUI</a>
-      <span class="ms-1"
-        >&copy; {{ new Date().getFullYear() }} creativeLabs.</span
-      >
+      <a href="https://github.com/cse264/final-project-rammn" target="_blank">Boredle</a>
+      <span class="ms-1">&copy; {{ new Date().getFullYear() }} RAMMN</span>
     </div>
     <div class="ms-auto">
-      <span class="me-1" target="_blank">Powered by</span>
-      <a href="https://coreui.io/vue">CoreUI for Vue</a>
+      <span class="me-1" target="_blank">Project for</span>
+      <a href="https://www.lehigh.edu/">Lehigh University</a>
     </div>
   </CFooter>
 </template>
