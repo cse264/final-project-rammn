@@ -1,21 +1,24 @@
 <template>
   <CHeader position="sticky" class="mb-4">
     <CContainer fluid>
-      <CHeaderToggler class="ps-1" @click="$store.commit('toggleSidebar')">
+      <!-- <CHeaderToggler class="ps-1" @click="$store.commit('toggleSidebar')">
         <CIcon icon="cil-menu" size="lg" />
-      </CHeaderToggler>
-      <CHeaderBrand class="mx-auto d-lg-none" to="/">
+      </CHeaderToggler> -->
+      <!-- <CHeaderBrand class="mx-auto d-lg-none" to="/">
         <CIcon :icon="logo" height="48" alt="Logo" />
-      </CHeaderBrand>
+      </CHeaderBrand> -->
       <CHeaderNav class="d-none d-md-flex me-auto">
         <CNavItem>
-          <CNavLink href="/dashboard"> Dashboard </CNavLink>
+          <CNavLink href="#/search">Search</CNavLink>
         </CNavItem>
         <CNavItem>
-          <CNavLink href="#">Users</CNavLink>
+          <CNavLink href="#/login">Login</CNavLink>
         </CNavItem>
         <CNavItem>
-          <CNavLink href="#">Settings</CNavLink>
+          <CNavLink href="#/profile">Profile</CNavLink>
+        </CNavItem>
+        <CNavItem>
+          <CNavLink href="#/dashboard">Dashboard</CNavLink>
         </CNavItem>
       </CHeaderNav>
       <CHeaderNav>
