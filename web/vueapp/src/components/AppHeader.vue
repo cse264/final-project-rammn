@@ -1,12 +1,9 @@
 <template>
   <CHeader position="sticky" class="mb-4">
     <CContainer fluid>
-      <!-- <CHeaderToggler class="ps-1" @click="$store.commit('toggleSidebar')">
-        <CIcon icon="cil-menu" size="lg" />
-      </CHeaderToggler> -->
-      <!-- <CHeaderBrand class="mx-auto d-lg-none" to="/">
-        <CIcon :icon="logo" height="48" alt="Logo" />
-      </CHeaderBrand> -->
+      <CNavbarBrand href="#">
+        <CImage :src="logo" height="50"/>
+      </CNavbarBrand>
       <CHeaderNav class="d-none d-md-flex me-auto">
         <CNavItem>
           <CNavLink href="#/search">Search</CNavLink>
@@ -31,7 +28,7 @@
 
 <script>
 import AppBreadcrumb from './AppBreadcrumb'
-import { logo } from '@/assets/brand/logo'
+import logo from '@/assets/images/logo.png'
 export default {
   name: 'AppHeader',
   components: {

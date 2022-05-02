@@ -49,7 +49,6 @@
                     <div>{{ item.time }}</div>
                   </CTableDataCell>
                 </CTableRow>
-                <CTableRow> </CTableRow>
               </CTableBody>
             </CTable>
           </CCardBody>
@@ -79,7 +78,6 @@
                     <div>{{ item.time }}</div>
                   </CTableDataCell>
                 </CTableRow>
-                <CTableRow> </CTableRow>
               </CTableBody>
             </CTable>
           </CCardBody>
@@ -111,7 +109,6 @@
                     <div>{{ item.time }}</div>
                   </CTableDataCell>
                 </CTableRow>
-                <CTableRow> </CTableRow>
               </CTableBody>
             </CTable>
           </CCardBody>

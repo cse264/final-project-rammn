@@ -6,7 +6,7 @@
     </div>
     <div class="ms-auto">
       <span class="me-1" target="_blank">Project for</span>
-      <a href="https://www.lehigh.edu/">Lehigh University</a>
+      <a href="https://www.lehigh.edu/" target="_blank">Lehigh University</a>
     </div>
   </CFooter>
 </template>
