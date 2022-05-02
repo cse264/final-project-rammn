@@ -32,12 +32,14 @@ def init_db():
 
 # Add database to global variable
 def get_db():
+    global db
     if 'db' not in g:
         try:
             g.db = psycopg2.connect(current_app.config['DATABASE_URL'])
         except psycopg2.DatabaseError as e:
             print(e, file=sys.stderr)
             raise e
+    db = g.db
     return g.db
 
 # Close database connection
@@ -64,7 +66,8 @@ def print_exception(err):
 
 # Add user
 def add_user(user_id, reddit_identity, reddit_username):
-    db = get_db()
+    global db
+    # db = get_db()
     query = "INSERT INTO users (id, sub, fname, lname, gender, email, birthday) VALUES (%s, %s, %s)"
     with db.cursor() as cursor:
         try:
@@ -80,7 +83,8 @@ def add_user(user_id, reddit_identity, reddit_username):
 
 # Get user information
 def get_user(user_id):
-    db = get_db()
+    global db
+    # db = get_db()
     # Get user information
     query = "SELECT * FROM users WHERE id = %s LIMIT 1"
     with db.cursor() as cursor:
@@ -109,7 +113,8 @@ def get_user(user_id):
 
 # Get most recent users
 def get_most_recent_users(limit = 10):
-    db = get_db()
+    global db
+    # db = get_db()
     query = "SELECT * FROM users ORDER BY last_accessed DESC LIMIT %s"
     with db.cursor() as cursor:
         try:
@@ -124,7 +129,8 @@ def get_most_recent_users(limit = 10):
 
 # Get users by top total search history
 def get_users_by_total_search_history(limit = 10):
-    db = get_db()
+    global db
+    # db = get_db()
     query = "SELECT users.id, users.fname, users.lname, COUNT(*) FROM users \
         LEFT JOIN search_history ON users.id = search_history.user_id \
             GROUP BY users.id ORDER BY count(*) DESC LIMIT %s" 
@@ -141,7 +147,8 @@ def get_users_by_total_search_history(limit = 10):
 
 # Get user privileges
 def get_user_privileges(user_id):
-    db = get_db()
+    global db
+    # db = get_db()
     query = "SELECT level FROM privileges WHERE user_id = %s LIMIT 1"
     with db.cursor() as cursor:
         try:
@@ -158,7 +165,8 @@ def get_user_privileges(user_id):
 
 # Get search history by user
 def get_user_search_history(user_id):
-    db = get_db()
+    global db
+    # db = get_db()
     query = "SELECT * FROM search_history WHERE user_id = %s"
     with db.cursor() as cursor:
         try:
@@ -173,7 +181,8 @@ def get_user_search_history(user_id):
 
 # Add user search history
 def add_user_search_history(user_id, search_term):
-    db = get_db()
+    global db
+    # db = get_db()
     query = "INSERT INTO search_history (user_id, search) VALUES (%s, %s)"
     with db.cursor() as cursor:
         try:
@@ -189,7 +198,8 @@ def add_user_search_history(user_id, search_term):
 
 # Get search history, sorted by most recent
 def get_most_recent_search_history(limit = 10):
-    db = get_db()
+    global db
+    # db = get_db()
     query = "SELECT * FROM search_history ORDER BY last_accessed DESC LIMIT %s"
     with db.cursor() as cursor:
         try:
@@ -206,7 +216,8 @@ def get_most_recent_search_history(limit = 10):
 
 # Get all unique interests
 def get_all_interests():
-    db = get_db()
+    global db
+    # db = get_db()
     query = "SELECT DISTINCT interest, description FROM interests"
     with db.cursor() as cursor:
         try:
@@ -221,7 +232,8 @@ def get_all_interests():
 
 # Add interest
 def add_interest(interest, description = None):
-    db = get_db()
+    global db
+    # db = get_db()
     if description is None:
         query = "INSERT INTO interests (interest) VALUES (%s)"
     else:
@@ -240,7 +252,8 @@ def add_interest(interest, description = None):
 
 # Add user interests
 def add_user_interests(user_id, interests):
-    db = get_db()
+    global db
+    # db = get_db()
     interest_query = "SELECT id FROM interests WHERE interest = %s LIMIT 1"
     query = "INSERT INTO user_interests (user_id, interest) VALUES (%s, %s)"
     interests_ids = []
