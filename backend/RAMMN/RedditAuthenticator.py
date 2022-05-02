@@ -11,14 +11,14 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
     Python example code: https://github.com/reddit-archive/reddit/wiki/OAuth2-Python-Example.
     '''
 
-    def __init__(self) -> None:
+    def __init__(self,secerts) -> None:
         '''
         Construct new Reddit Authenticator instance.\n
         Must have "REDDIT_OAUTH_CLIENT_ID" and "REDDIT_OAUTH_CLIENT_SECRET" config variables set.
         '''
-        super().__init__()
+        super().__init__(secerts)
 
-        if ("REDDIT_OAUTH_CLIENT_ID" not in self.__secerts) or ("REDDIT_OAUTH_CLIENT_SECRET" not in self.__secerts) or ("REDDIT_OAUTH_REDIRECT_URI" not in self.__secerts):
+        if ("CLIENT_ID" not in self.__secerts["REDDIT_OAUTH"]) or ("CLIENT_SECRET" not in self.__secerts["REDDIT_OAUTH"]) or ("REDIRECT_URI" not in self.__secerts["REDDIT_OAUTH"]):
             raise ValueError(self.__secerts)
 
     def make_authorization_url(self, session):

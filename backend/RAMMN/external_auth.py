@@ -20,7 +20,7 @@ class AuthenticatorFactory:
         if option in self.__authenticators:
 
             if self.__authenticators not in g:
-                g[self.__authenticators] = self.__authenticators[option]()
+                g[self.__authenticators] = self.__authenticators[option](current_app.config)
             
             return g[self.__authenticators]
 

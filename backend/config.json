@@ -11,6 +11,11 @@
             "https://rammn.herokuapp.com"
         ]
     },
+    "REDDIT_OAUTH": {
+        "CLIENT_ID":"HfEoegtkqT8We5xONqsG2g",
+        "CLIENT_SECERT":"uYbn6ftwXpai7_gtIvgelYnu2wCOww",
+        "REDIRECT_URI":"https://rammn.herokuapp.com/auth/reddit_callback"
+    },
     "DATABASE_URL": "postgres://lcnocbrmucvymo:8c0cf06f1c8f797032d638c03169f309623bb92ea80d1dc61febc8bbe4c7b1b1@ec2-52-3-60-53.compute-1.amazonaws.com:5432/dahaea12a669hl",
     "SESSION_PERMANENT":"False",
     "SESSION_TYPE":"filesystem"
