@@ -2,7 +2,9 @@ import os
 
 import json
 
-from flask import Flask
+from flask import Flask, session
+
+from flask_session import Session
 
 from flask_cors import CORS, cross_origin
 
@@ -25,7 +27,15 @@ def create_app(test_config=None):
         app.config.from_mapping(
             SECRET_KEY='dev',
             DATABASE=os.environ['DATABASE_URL'],
+            SESSION_PERMANENT=False,
+            SESSION_TYPE="filesystem"
         )
+
+    # set up Session
+    Session(app)
+    session["states"] = set()
+    session["store"] = set()
+    
 
     # set up CORS
     Cors = CORS(app)

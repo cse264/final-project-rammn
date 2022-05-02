@@ -21,10 +21,13 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
         if ("REDDIT_OAUTH_CLIENT_ID" not in self.__secerts) or ("REDDIT_OAUTH_CLIENT_SECRET" not in self.__secerts) or ("REDDIT_OAUTH_REDIRECT_URI" not in self.__secerts):
             raise ValueError(self.__secerts)
 
-    def make_authorization_url(self):
+    def make_authorization_url(self, session):
 
         # Note: this number should be randomized in the future
-        state = 5
+        from uuid import uuid4
+        state = str(uuid4())
+
+        session["states"].add(state)
 
         params = {"client_id": self.__secerts["REDDIT_OAUTH_CLIENT_ID"],
                   "response_type": "code",

@@ -1,5 +1,7 @@
 import functools
 
+from uuid import uuid4
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
 )
@@ -18,13 +20,22 @@ def reddit_callback():
     error = request.args.get('error', '')
     if error:
         return "Error: " + error
+
     state = request.args.get('state', '')
-    if not is_valid_state(state):
+    if state not in session["states"]:
         # Uh-oh, this request wasn't started by us!
         abort(403)
+    
     code = request.args.get('code')
-    # We'll change this next line in just a moment
+    
+    
+
     access_token = reddit_auth.get_token(code)
+
+    # get users unique identifier from reddit
+    
+    # check if they exist
+
     return "Your reddit username is: %s" % reddit_auth.get_username(access_token)
 
 @bp.route('/register', methods=('GET', 'POST'))
