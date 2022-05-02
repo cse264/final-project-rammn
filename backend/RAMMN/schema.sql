@@ -8,26 +8,17 @@
 CREATE TABLE IF NOT EXISTS public.users
 (
     id character varying(10) COLLATE pg_catalog."default" NOT NULL,
-    sub character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    fname character varying(35) COLLATE pg_catalog."default" NOT NULL,
-    lname character varying(35) COLLATE pg_catalog."default" NOT NULL,
-    gender numeric(1,0) NOT NULL,
-    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    birthday date NOT NULL,
+    r_identity character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    r_username character varying(35) COLLATE pg_catalog."default" NOT NULL,
     last_accessed timestamp without time zone NOT NULL DEFAULT now(),
     CONSTRAINT users_pkey PRIMARY KEY (id),
-    CONSTRAINT unique_email UNIQUE (email),
-    CONSTRAINT unique_sub UNIQUE (sub),
-    CONSTRAINT gender_code CHECK (gender = ANY (ARRAY[0::numeric, 1::numeric, 2::numeric, 9::numeric]))
+    CONSTRAINT unique_r_identity UNIQUE (r_identity)
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.users
     OWNER to lcnocbrmucvymo;
-
-COMMENT ON CONSTRAINT gender_code ON public.users
-    IS 'Per ISO/IEC 5218 standards, 0: Not known, 1: Male, 2: Female, 9: Not applicable';
 
 -- Table: public.privileges
 
@@ -48,6 +39,16 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.privileges
     OWNER to lcnocbrmucvymo;
+
+-- Trigger: set_default_user_privilege
+
+-- DROP TRIGGER IF EXISTS set_default_user_privilege ON public.users;
+
+CREATE TRIGGER set_default_user_privilege
+    AFTER INSERT
+    ON public.users
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_default_user_privilege();
 
 -- Table: public.interests
 
