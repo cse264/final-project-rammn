@@ -5,6 +5,32 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext            
 
+""" SETUP FUNCTIONS """
+
+# Set functions for app context
+def init_app(app):
+    app.teardown_appcontext(close_db)           # close on teardown
+    app.cli.add_command(init_db)                # add init_db to click
+
+# Initialize the database on click
+@click.command('init-db')
+@with_appcontext
+def init_db():
+    db = get_db()
+
+    with current_app.open_resource('schema.sql') as f:
+        with db.cursor() as cursor:
+            try:
+                cursor.execute(f.read().decode('utf8'))
+                db.commit()
+                cursor.close()
+                click.echo('Initialized the database.')
+            except Exception as err:
+                print_exception(err)
+                db.rollback()
+                cursor.close()
+
+# Add database to global variable
 def get_db():
     if 'db' not in g:
         try:
@@ -12,65 +38,73 @@ def get_db():
         except psycopg2.DatabaseError as e:
             print(e, file=sys.stderr)
             raise e
-
     return g.db
 
-def example_method():
-    """This function is an example on how to execute queries with cursor"""
-    db = get_db()
+# Close database connection
+def close_db(e=None):
+    db = g.pop('db', None)
 
-    query = "SELECT * FROM tb1"
+    if db is not None:
+        db.close()
 
-    with db.cursor() as cursor:
-        cursor.execute(query)
-        records = [row for row in cursor.fetchall()]
-        cursor.close()
-        return records
 
-# prepared statements set, functions that execute them
-# pgadmin
-#   log into heroku
-#    -> settings, config vars (env vars)
-#    -> database_url for postgres (postgres://lcnocbrmucvymo:8c0cf06f1c8f797032d638c03169f309623bb92ea80d1dc61febc8bbe4c7b1b1@ec2-52-3-60-53.compute-1.amazonaws.com:5432/dahaea12a669hl )
-#   go to pgadmin
-#    -> right click server, create server
-#    -> create database ("online database uri parsers" for help)
-#    -> go to onew new database, you can see all sorts of databases we don't have access to
-#    -> ours is dahaea12a669hl
-#       -> there's the database, schema, tb1 and tb2 are example tables by Max
-#       -> can right click, query tool, and execute on the data
-#    -> put useful prepared statements into db.py
+""" ERROR HANDLER """
 
-# don't touch deploy_heroku
-# can try deploy_local, may not work
-#   config.json holds all relevant data (copied data from heroku)
-#   could get commit or auto-commit set on pgadmin
+# Print psycopg2 errors
+def print_exception(err):
+    err_type, err_obj, traceback = sys.exc_info()
+    line_num = traceback.tbl_lineno
+    print(f"\npsycopg2.DatabaseError: {err} on line {line_num}")
+    print(f"psycopg2.Traceback: {traceback} -- type: {err_type}")
+    print(f"psycopg2.Diagnostics: {err.diag}")
+    print(f"psycopg2.pgerror: {err.pgerror}")
+    print(f"psycopg2.pgcode: {err.pgcode}\n")
 
 """ USERS FUNCTIONS """
 
-# Set user information
-def set_user(user_id, reddit_identity, fname, lname, gender, email, birthday):
+# Add user
+def add_user(user_id, reddit_identity, reddit_username):
     db = get_db()
-    query = "INSERT INTO users (id, sub, fname, lname, gender, email, birthday) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO users (id, sub, fname, lname, gender, email, birthday) VALUES (%s, %s, %s)"
     with db.cursor() as cursor:
-        cursor.execute(query, (user_id, reddit_identity, fname, lname, gender, email, birthday))
-        db.commit()
-        cursor.close()
+        try:
+            cursor.execute(query, (user_id, reddit_identity, reddit_username))
+            db.commit()
+            cursor.close()
+            return True
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
 
 # Get user information
 def get_user(user_id):
     db = get_db()
+    # Get user information
     query = "SELECT * FROM users WHERE id = %s LIMIT 1"
     with db.cursor() as cursor:
-        cursor.execute(query, (user_id,))
-        user = cursor.fetchone()
-        cursor.close()
+        try:
+            cursor.execute(query, (user_id))
+            user = cursor.fetchone()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
     # Update last_accessed timestamp
     query = "UPDATE users SET last_accessed = NOW() WHERE id = %s"
     with db.cursor() as cursor:
-        cursor.execute(query, (user_id,))
-        db.commit()
-        cursor.close()
+        try:
+            cursor.execute(query, (user_id))
+            db.commit()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
     return user
 
 # Get most recent users
@@ -78,9 +112,14 @@ def get_most_recent_users(limit = 10):
     db = get_db()
     query = "SELECT * FROM users ORDER BY last_accessed DESC LIMIT %s"
     with db.cursor() as cursor:
-        cursor.execute(query, (limit,))
-        users = cursor.fetchall()
-        cursor.close()
+        try:
+            cursor.execute(query, (limit))
+            users = cursor.fetchall()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
     return users
 
 # Get users by top total search history
@@ -90,9 +129,14 @@ def get_users_by_total_search_history(limit = 10):
         LEFT JOIN search_history ON users.id = search_history.user_id \
             GROUP BY users.id ORDER BY count(*) DESC LIMIT %s" 
     with db.cursor() as cursor:
-        cursor.execute(query, (limit,))
-        users = cursor.fetchall()
-        cursor.close()
+        try:
+            cursor.execute(query, (limit))
+            users = cursor.fetchall()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
     return users
 
 # Get user privileges
@@ -100,9 +144,14 @@ def get_user_privileges(user_id):
     db = get_db()
     query = "SELECT level FROM privileges WHERE user_id = %s LIMIT 1"
     with db.cursor() as cursor:
-        cursor.execute(query, (user_id,))
-        privileges = cursor.fetchone()
-        cursor.close()
+        try:
+            cursor.execute(query, (user_id))
+            privileges = cursor.fetchone()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
     return privileges
 
 """ SEARCH_HISTORY FUNCTIONS """
@@ -112,9 +161,14 @@ def get_user_search_history(user_id):
     db = get_db()
     query = "SELECT * FROM search_history WHERE user_id = %s"
     with db.cursor() as cursor:
-        cursor.execute(query, (user_id,))
-        search_history = cursor.fetchall()
-        cursor.close()
+        try:
+            cursor.execute(query, (user_id))
+            search_history = cursor.fetchall()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
     return search_history
 
 # Add user search history
@@ -122,29 +176,47 @@ def add_user_search_history(user_id, search_term):
     db = get_db()
     query = "INSERT INTO search_history (user_id, search) VALUES (%s, %s)"
     with db.cursor() as cursor:
-        cursor.execute(query, (user_id, search_term))
-        db.commit()
-        cursor.close()
+        try:
+            cursor.execute(query, (user_id, search_term))
+            db.commit()
+            cursor.close()
+            return True
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
 
 # Get search history, sorted by most recent
 def get_most_recent_search_history(limit = 10):
     db = get_db()
     query = "SELECT * FROM search_history ORDER BY last_accessed DESC LIMIT %s"
     with db.cursor() as cursor:
-        cursor.execute(query, (limit,))
-        search_history = cursor.fetchall()
-        cursor.close()
+        try:
+            cursor.execute(query, (limit))
+            search_history = cursor.fetchall()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
     return search_history
 
 ''' INTERESTS FUNCTIONS '''
+
 # Get all unique interests
 def get_all_interests():
     db = get_db()
     query = "SELECT DISTINCT interest, description FROM interests"
     with db.cursor() as cursor:
-        cursor.execute(query)
-        interests = cursor.fetchall()
-        cursor.close()
+        try:
+            cursor.execute(query)
+            interests = cursor.fetchall()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
     return interests
 
 # Add interest
@@ -155,9 +227,16 @@ def add_interest(interest, description = None):
     else:
         query = "INSERT INTO interests (interest, description) VALUES (%s, %s)"
     with db.cursor() as cursor:
-        cursor.execute(query, (interest, description))
-        db.commit()
-        cursor.close()
+        try:
+            cursor.execute(query, (interest, description))
+            db.commit()
+            cursor.close()
+            return True
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
 
 # Add user interests
 def add_user_interests(user_id, interests):
@@ -166,34 +245,16 @@ def add_user_interests(user_id, interests):
     query = "INSERT INTO user_interests (user_id, interest) VALUES (%s, %s)"
     interests_ids = []
     with db.cursor() as cursor:
-        for interest in interests:
-            cursor.execute(interest_query, (interest,))
-            interest_id = cursor.fetchall()
-            cursor.execute(query, (user_id, interest_id))
-        db.commit()
-        cursor.close()
-
-""" DATABASE FUNCTIONS """
-
-# Initialize the database on click
-@click.command('init-db')
-@with_appcontext
-def init_db():
-    db = get_db()
-
-    with current_app.open_resource('schema.sql') as f:
-        with db.cursor() as cursor:
-            cursor.execute(f.read().decode('utf8'))
-    
-    click.echo('Initialized the database.')
-
-# Close database connection
-def close_db(e=None):
-    db = g.pop('db', None)
-
-    if db is not None:
-        db.close()
-
-def init_app(app):
-    app.teardown_appcontext(close_db)           # close on teardown
-    app.cli.add_command(init_db)                # add init_db to click
+        try:
+            for interest in interests:
+                cursor.execute(interest_query, (interest,))
+                interest_id = cursor.fetchall()
+                cursor.execute(query, (user_id, interest_id))
+            db.commit()
+            cursor.close()
+            return True
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
