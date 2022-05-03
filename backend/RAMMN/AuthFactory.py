@@ -1,7 +1,7 @@
 from ast import Dict
 from flask import current_app, g
-import ExternalAPIAuthenticator
-import RedditAuthenticator
+from RAMMN import ExternalAPIAuthenticator
+from RAMMN import RedditAuthenticator
 
 class AuthenticatorFactory:
 

@@ -1,8 +1,9 @@
-import ExternalAPIAuthenticator
-
 # Library for making HTTP requests
 import requests
 import requests.auth
+
+from RAMMN.ExternalAPIAuthenticator import ExternalAPIAuthenticator
+from RAMMN import cache
 
 class RedditAuthenticator(ExternalAPIAuthenticator):
     '''
@@ -27,12 +28,12 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
         from uuid import uuid4
         state = str(uuid4())
 
-        session["states"].add(state)
+        cache.set(state, "valid")
 
-        params = {"client_id": self.__secerts["REDDIT_OAUTH_CLIENT_ID"],
+        params = {"client_id": self.__secerts["REDDIT_OAUTH"]["CLIENT_ID"],
                   "response_type": "code",
                   "state": state,
-                  "redirect_uri": self.__secerts["REDDIT_OAUTH_REDIRECT_URI"],
+                  "redirect_uri": self.__secerts["REDDIT_OAUTH"]["REDIRECT_URI"],
                   "duration": "temporary",
                   "scope": "identity"}
         import urllib
@@ -42,21 +43,21 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
 
     def get_token(self, code):
         client_auth = requests.auth.HTTPBasicAuth(
-            self.__secerts["REDDIT_OAUTH_CLIENT_ID"], self.__secerts["REDDIT_OAUTH_CLIENT_SECERT"])
+            self.__secerts["REDDIT_OAUTH"]["CLIENT_ID"], self.__secerts["REDDIT_OAUTH"]["CLIENT_SECERT"])
         post_data = {"grant_type": "authorization_code",
                      "code": code,
-                     "redirect_uri": self.__secerts["REDDIT_OAUTH_REDIRECT_URI"]}
+                     "redirect_uri": self.__secerts["REDDIT_OAUTH"]["REDIRECT_URI"]}
         response = requests.post("https://ssl.reddit.com/api/v1/access_token",
                                  auth=client_auth,
                                  data=post_data)
         token_json = response.json()
         return token_json["access_token"]
 
-    def get_username(self, access_token):
+    def get_user(self, access_token):
         headers = {"Authorization": "bearer " + access_token}
         response = requests.get("https://oauth.reddit.com/api/v1/me", headers=headers)
-        me_json = response.json()
-        return me_json['name']
+        user_json = response.json()
+        return user_json
 
     def validate_credentials() -> bool:
         '''

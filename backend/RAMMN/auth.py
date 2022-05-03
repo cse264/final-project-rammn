@@ -1,16 +1,24 @@
-import functools
 
+from os import stat
 from uuid import uuid4
+import datetime
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
+    Blueprint, g, jsonify, request, session, abort, make_response
 )
-from werkzeug.security import check_password_hash, generate_password_hash
 
-from RAMMN.db import get_db
-from RAMMN.external_auth import AuthenticatorFactory
+from RAMMN import db
+from RAMMN import cache
+from RAMMN.AuthFactory import AuthenticatorFactory
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+@bp.route('')
+def get_auth_link():
+
+    reddit_auth = AuthenticatorFactory().get_authenticator("REDDIT")
+
+    return reddit_auth.make_authorization_url()
 
 @bp.route('/reddit_callback')
 def reddit_callback():
@@ -22,93 +30,33 @@ def reddit_callback():
         return "Error: " + error
 
     state = request.args.get('state', '')
-    if state not in session["states"]:
+
+    if not cache.get(state):
         # Uh-oh, this request wasn't started by us!
         abort(403)
-    
+
     code = request.args.get('code')
-    
-    
 
     access_token = reddit_auth.get_token(code)
 
-    # get users unique identifier from reddit
-    
-    # check if they exist
+    user = reddit_auth.get_user(access_token)
 
-    return "Your reddit username is: %s" % reddit_auth.get_username(access_token)
+    if not db.get_user(user["id"]):
+        db.add_user(user["id"], user["name"])
 
-@bp.route('/register', methods=('GET', 'POST'))
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error = None
+    # return access token and set cookie for session store with expiration time less than 1 hour
 
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
+    session = str(uuid4())
 
-        if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO tb1 (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"User {username} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
+    resp = make_response(jsonify(), 200)
 
-        flash(error)
+    expire_time = datetime.datetime.now()
+    expire_time = datetime.timedelta(hour=1)
 
-    return render_template('auth/register.html')
+    resp.set_cookie('session', session, expires=expire_time)
 
-@bp.route('/login', methods=('GET', 'POST'))
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error = None
-        user = db.execute(
-            'SELECT * FROM tb1 WHERE username = ?', (username,)
-        ).fetchone()
+    cache.set(session, user.id)
 
-        if user is None:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password.'
+    resp.set_data(access_token)
 
-        if error is None:
-            session.clear()
-            session['user_id'] = user['id']
-            return redirect(url_for('index'))
-
-        flash(error)
-
-    return render_template('auth/login.html')
-
-@bp.before_app_request
-def load_logged_in_user():
-    user_id = session.get('user_id')
-
-    if user_id is None:
-        g.user = None
-    else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
-
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
-
-        return view(**kwargs)
-
-    return wrapped_view
+    return resp
