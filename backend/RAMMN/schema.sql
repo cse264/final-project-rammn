@@ -8,11 +8,9 @@
 CREATE TABLE IF NOT EXISTS public.users
 (
     id character varying(10) COLLATE pg_catalog."default" NOT NULL,
-    r_identity character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    r_username character varying(35) COLLATE pg_catalog."default" NOT NULL,
+    username character varying(35) COLLATE pg_catalog."default" NOT NULL,
     last_accessed timestamp without time zone NOT NULL DEFAULT now(),
     CONSTRAINT users_pkey PRIMARY KEY (id),
-    CONSTRAINT unique_r_identity UNIQUE (r_identity)
 )
 
 TABLESPACE pg_default;
