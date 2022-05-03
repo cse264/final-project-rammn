@@ -1,7 +1,7 @@
 from ast import Dict
 from flask import current_app, g
-import ExternalAPIAuthenticator
-import RedditAuthenticator
+from RAMMN import ExternalAPIAuthenticator
+from RAMMN import RedditAuthenticator
 
 class AuthenticatorFactory:
 
@@ -20,7 +20,7 @@ class AuthenticatorFactory:
         if option in self.__authenticators:
 
             if self.__authenticators not in g:
-                g[self.__authenticators] = self.__authenticators[option]()
+                g[self.__authenticators] = self.__authenticators[option](current_app.config)
             
             return g[self.__authenticators]
 

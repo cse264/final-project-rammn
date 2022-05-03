@@ -4,7 +4,7 @@ class ExternalAPIAuthenticator:
     I.e: token validation, payload information, etc.\n
     '''
 
-    def __init__(self) -> None:
+    def __init__(self, secerts) -> None:
         '''
         Create an external API authenticator.\n
         Each implementation subclass may have unique requirements of what secerts exist.\n
@@ -12,10 +12,10 @@ class ExternalAPIAuthenticator:
         Adding malformed secerts will result in HTTP request errors.
         '''
 
-        if(not current_app.config):
-            raise ValueError(current_app.config)
+        if(not secerts):
+            raise ValueError(secerts)
 
-        self.__secerts = current_app.config.copy()
+        self.__secerts = secerts
         '''secerts hold any API key information needed by the authenticator'''
 
     def set_secerts(self, dict) -> None:

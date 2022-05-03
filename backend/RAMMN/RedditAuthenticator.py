@@ -1,8 +1,9 @@
-import ExternalAPIAuthenticator
-
 # Library for making HTTP requests
 import requests
 import requests.auth
+
+from RAMMN.ExternalAPIAuthenticator import ExternalAPIAuthenticator
+from RAMMN import cache
 
 class RedditAuthenticator(ExternalAPIAuthenticator):
     '''
@@ -11,14 +12,14 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
     Python example code: https://github.com/reddit-archive/reddit/wiki/OAuth2-Python-Example.
     '''
 
-    def __init__(self) -> None:
+    def __init__(self,secerts) -> None:
         '''
         Construct new Reddit Authenticator instance.\n
         Must have "REDDIT_OAUTH_CLIENT_ID" and "REDDIT_OAUTH_CLIENT_SECRET" config variables set.
         '''
-        super().__init__()
+        super().__init__(secerts)
 
-        if ("REDDIT_OAUTH_CLIENT_ID" not in self.__secerts) or ("REDDIT_OAUTH_CLIENT_SECRET" not in self.__secerts) or ("REDDIT_OAUTH_REDIRECT_URI" not in self.__secerts):
+        if ("CLIENT_ID" not in self.__secerts["REDDIT_OAUTH"]) or ("CLIENT_SECRET" not in self.__secerts["REDDIT_OAUTH"]) or ("REDIRECT_URI" not in self.__secerts["REDDIT_OAUTH"]):
             raise ValueError(self.__secerts)
 
     def make_authorization_url(self, session):
@@ -27,12 +28,12 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
         from uuid import uuid4
         state = str(uuid4())
 
-        session["states"].add(state)
+        cache.set(state, "valid")
 
-        params = {"client_id": self.__secerts["REDDIT_OAUTH_CLIENT_ID"],
+        params = {"client_id": self.__secerts["REDDIT_OAUTH"]["CLIENT_ID"],
                   "response_type": "code",
                   "state": state,
-                  "redirect_uri": self.__secerts["REDDIT_OAUTH_REDIRECT_URI"],
+                  "redirect_uri": self.__secerts["REDDIT_OAUTH"]["REDIRECT_URI"],
                   "duration": "temporary",
                   "scope": "identity"}
         import urllib
@@ -42,21 +43,21 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
 
     def get_token(self, code):
         client_auth = requests.auth.HTTPBasicAuth(
-            self.__secerts["REDDIT_OAUTH_CLIENT_ID"], self.__secerts["REDDIT_OAUTH_CLIENT_SECERT"])
+            self.__secerts["REDDIT_OAUTH"]["CLIENT_ID"], self.__secerts["REDDIT_OAUTH"]["CLIENT_SECERT"])
         post_data = {"grant_type": "authorization_code",
                      "code": code,
-                     "redirect_uri": self.__secerts["REDDIT_OAUTH_REDIRECT_URI"]}
+                     "redirect_uri": self.__secerts["REDDIT_OAUTH"]["REDIRECT_URI"]}
         response = requests.post("https://ssl.reddit.com/api/v1/access_token",
                                  auth=client_auth,
                                  data=post_data)
         token_json = response.json()
         return token_json["access_token"]
 
-    def get_username(self, access_token):
+    def get_user(self, access_token):
         headers = {"Authorization": "bearer " + access_token}
         response = requests.get("https://oauth.reddit.com/api/v1/me", headers=headers)
-        me_json = response.json()
-        return me_json['name']
+        user_json = response.json()
+        return user_json
 
     def validate_credentials() -> bool:
         '''
