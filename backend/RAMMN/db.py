@@ -65,13 +65,13 @@ def print_exception(err):
 """ USERS FUNCTIONS """
 
 # Add user
-def add_user(user_id, reddit_identity, reddit_username):
+def add_user(user_id, username):
     global db
     # db = get_db()
-    query = "INSERT INTO users (id, sub, fname, lname, gender, email, birthday) VALUES (%s, %s, %s)"
+    query = "INSERT INTO users (id, username) VALUES (%s, %s)"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (user_id, reddit_identity, reddit_username))
+            cursor.execute(query, (user_id, username))
             db.commit()
             cursor.close()
             return True
@@ -131,7 +131,7 @@ def get_most_recent_users(limit = 10):
 def get_users_by_total_search_history(limit = 10):
     global db
     # db = get_db()
-    query = "SELECT users.id, users.fname, users.lname, COUNT(*) FROM users \
+    query = "SELECT users.id, COUNT(*) FROM users \
         LEFT JOIN search_history ON users.id = search_history.user_id \
             GROUP BY users.id ORDER BY count(*) DESC LIMIT %s" 
     with db.cursor() as cursor:
@@ -144,6 +144,25 @@ def get_users_by_total_search_history(limit = 10):
             cursor.close()
             return False
     return users
+
+""" PRIVILEGES FUNCTIONS """
+
+# Set user privileges
+def set_user_privileges(user_id, level):
+    global db
+    # db = get_db()
+    query = "UPDATE privileges (level) VALUES (%s) WHERE user_id = %s"
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(query, (level, user_id))
+            db.commit()
+            cursor.close()
+            return True
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
 
 # Get user privileges
 def get_user_privileges(user_id):
@@ -212,7 +231,7 @@ def get_most_recent_search_history(limit = 10):
             return False
     return search_history
 
-''' INTERESTS FUNCTIONS '''
+""" INTERESTS FUNCTIONS """
 
 # Get all unique interests
 def get_all_interests():
