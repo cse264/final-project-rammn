@@ -51,7 +51,7 @@ export default {
     var loggedin = false;
     var button = true;
     var admin = false;
-    var username = "u/test123";
+    var username = "u/lehigh-jac222";
     return {
       loggedin,
       button,
