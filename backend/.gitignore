@@ -1,7 +1,5 @@
 venv/
 
-config.json
-
 *.pyc
 __pycache__/
 
@@ -16,5 +14,6 @@ build/
 *.egg-info/
 
 # do not need template/static folders, can populate with 'npm run build' in vueapp folder
-templates/*
-static/*
+RAMMN/templates/
+RAMMN/static/
+config.json
