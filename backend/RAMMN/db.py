@@ -128,7 +128,7 @@ def get_all_users():
     return users
 
 # Get count of users
-def get_user_count():
+def get_users_count():
     global db
     # db = get_db()
     query = "SELECT COUNT(*) FROM users"
