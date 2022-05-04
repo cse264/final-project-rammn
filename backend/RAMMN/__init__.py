@@ -101,6 +101,10 @@ def create_app(test_config=None):
     from . import interests
     app.register_blueprint(interests.bp)
 
+    # import reddit-api-routes
+    from . import reddit
+    app.register_blueprint(reddit.bp)
+
     # get route responsible for serving main page
     from .views import sample_page
     app.register_blueprint(sample_page, url_prefix='/')

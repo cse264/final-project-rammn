@@ -128,8 +128,45 @@ export default {
       },
     ]
 
-    const recentSearches = fetch('/users/history').then(response => response.json()).then(data => data);
-    console.log(recentSearches);
+    const recentSearches = [
+      {
+        user: 'Yiorgos Avraamu',
+        search: 'redditpost link',
+        activity: '1/1/2022',
+      },
+      {
+        user: 'Yiorgos Avraamu',
+        search: 'redditpost link',
+        activity: '1/1/2022',
+      },
+      {
+        user: 'Yiorgos Avraamu',
+        search: 'redditpost link',
+        activity: '1/1/2022',
+      },
+      {
+        user: 'Yiorgos Avraamu',
+        search: 'redditpost link',
+        activity: '1/1/2022',
+      },
+      {
+        user: 'Yiorgos Avraamu',
+        search: 'redditpost link',
+        activity: '1/1/2022',
+      },
+      {
+        user: 'Yiorgos Avraamu',
+        search: 'redditpost link',
+        activity: '1/1/2022',
+      },
+      {
+        user: 'Yiorgos Avraamu',
+        search: 'redditpost link',
+        activity: '1/1/2022',
+      },
+    ]
+    // fetch('/users/history').then(response => response.json()).then(data => data);
+    // console.log(recentSearches);
 
     return {
       interests,

@@ -1,24 +1,17 @@
 <template>
   <div>
     <CRow>
-      <CCol :xs="4">
-        <CWidgetStatsF color="primary" :padding="false" title="Users" value="1234">
+      <CCol :xs="6">
+        <CWidgetStatsF color="primary" :padding="false" title="Users" :value="numUsers">
           <template #icon>
             <CIcon icon="cil-user" size="xl" />
           </template>
         </CWidgetStatsF>
       </CCol>
-      <CCol :xs="4">
-        <CWidgetStatsF color="secondary" :padding="false" title="Searches" value="1234">
+      <CCol :xs="6">
+        <CWidgetStatsF color="secondary" :padding="false" title="Searches" :value="numSearches">
           <template #icon>
             <CIcon icon="cil-magnifying-glass" size="xl" />
-          </template>
-        </CWidgetStatsF>
-      </CCol>
-      <CCol :xs="4">
-        <CWidgetStatsF color="info" :padding="false" title="idk" value="1234">
-          <template #icon>
-            <CIcon icon="cil-moon" size="xl" />
           </template>
         </CWidgetStatsF>
       </CCol>
@@ -121,6 +114,14 @@
 <script>
 export default {
   name: 'Dashboard',
+  async data() {
+    var numUsers = 1234;
+    var numSearches = 1234;
+    return {
+      numUsers,
+      numSearches,
+    }
+  },
   setup() {
     const recentSearches = [
       {
