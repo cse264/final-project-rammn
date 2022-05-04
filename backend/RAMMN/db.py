@@ -111,6 +111,39 @@ def get_user(user_id):
             return False
     return user
 
+# Get all users
+def get_all_users():
+    global db
+    # db = get_db()
+    query = "SELECT * FROM users"
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(query)
+            users = cursor.fetchall()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
+    return users
+
+# Get count of users
+def get_users_count():
+    global db
+    # db = get_db()
+    query = "SELECT COUNT(*) FROM users"
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(query)
+            count = cursor.fetchone()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
+    return count
+
 # Get most recent users
 def get_most_recent_users(limit = 10):
     global db
@@ -214,6 +247,39 @@ def add_user_search_history(user_id, search_term):
             db.rollback()
             cursor.close()
             return False
+
+# Get all search history
+def get_all_search_history():
+    global db
+    # db = get_db()
+    query = "SELECT * FROM search_history"
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(query)
+            search_history = cursor.fetchall()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            cursor.close()
+            return False
+    return search_history
+
+# Get count of search history
+def get_search_history_count():
+    global db
+    # db = get_db()
+    query = "SELECT COUNT(*) FROM search_history"
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(query)
+            count = cursor.fetchone()
+            cursor.close()
+        except Exception as err:
+            print_exception(err)
+            db.rollback()
+            cursor.close()
+            return False
+    return count
 
 # Get search history, sorted by most recent
 def get_most_recent_search_history(limit = 10):
