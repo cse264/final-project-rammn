@@ -32,9 +32,9 @@ def user_history():
     else:
         return db.add_user_search_history(uid, request.form["search_term"])
 
-@bp.route('/history')
-def users_history():
-    return db.get_most_recent_search_history()
+# @bp.route('/history')
+# def users_history():
+#     return db.get_most_recent_search_history()
 
 @bp.before_request
 def before_request():

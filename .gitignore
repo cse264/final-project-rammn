@@ -61,9 +61,9 @@ typings/
 .next
 
 # do not need template/static folders, can populate with 'npm run build' in vueapp folder
-templates/*
-static/*
-config.json
+backend/RAMMN/templates/*
+backend/RAMMN/static/*
+backend/config.json
 
 venv/
 

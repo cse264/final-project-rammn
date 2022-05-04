@@ -60,11 +60,13 @@ export default {
     }
   },
   methods: {
-    login() {
+    async login() {
       console.log("logged in");
       this.loggedin = true;
       this.button = false;
       this.admin = true;
+      var link = await fetch('/auth').then(response => response.json()).then(data => data);
+      window.location = link;
     },
   }
 }
