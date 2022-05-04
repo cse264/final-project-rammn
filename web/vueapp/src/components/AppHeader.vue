@@ -5,17 +5,25 @@
         <CImage :src="logo" height="50"/>
       </CNavbarBrand>
       <CHeaderNav class="d-none d-md-flex me-auto">
-        <CNavItem>
-          <CNavLink href="#/search">Search</CNavLink>
-        </CNavItem>
-        <CNavItem>
-          <CNavLink href="#/login">Login</CNavLink>
-        </CNavItem>
-        <CNavItem>
+        <CNavItem v-show="loggedin">
           <CNavLink href="#/profile">Profile</CNavLink>
         </CNavItem>
-        <CNavItem>
+        <CNavItem v-show="admin">
           <CNavLink href="#/dashboard">Dashboard</CNavLink>
+        </CNavItem>
+      </CHeaderNav>
+      <CHeaderNav>
+        <CNavItem>
+          <CButton v-show="button" color="primary" shape="rounded-pill" @click="login">
+            <CRow class="align-items-center">
+              <div align="center">
+                <strong>Login</strong>
+              </div>
+            </CRow>
+          </CButton>
+          <div v-show="loggedin" align="right">
+            <CNavLink href="#/profile">Logged in as {{ username }}</CNavLink>
+          </div>
         </CNavItem>
       </CHeaderNav>
     </CContainer>
@@ -39,5 +47,25 @@ export default {
       logo,
     }
   },
+  data() {
+    var loggedin = false;
+    var button = true;
+    var admin = false;
+    var username = "u/test123";
+    return {
+      loggedin,
+      button,
+      username,
+      admin,
+    }
+  },
+  methods: {
+    login() {
+      console.log("logged in");
+      this.loggedin = true;
+      this.button = false;
+      this.admin = true;
+    },
+  }
 }
 </script>

@@ -11,7 +11,7 @@
                   <p class="text-medium-emphasis">Sign In to your account</p>
                   <CInputGroup class="mb-3">
                     <CInputGroupText>
-                      <CIcon icon="cil-user" />
+                      <CIcon icon="cil-user"/>
                     </CInputGroupText>
                     <CFormInput
                       placeholder="Username"

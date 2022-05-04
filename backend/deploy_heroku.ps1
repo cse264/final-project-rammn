@@ -6,4 +6,4 @@ git add -f ./RAMMN/templates/*
 
 git commit -m "Deploying to heroku"
 
-git push heroku main
+git push heroku master
