@@ -71,7 +71,7 @@ def add_session(user_id, session_key) -> bool:
     # if not db:
     #     db = get_db()
     db = get_db()
-    query = "INSERT INTO sessions (user_id, session_key) VALUES (%s, %s)"
+    query = "INSERT INTO session (user_id, session_key) VALUES (%s, %s)"
     with db.cursor() as cursor:
         try:
             cursor.execute(query, (user_id, session_key))
@@ -89,10 +89,10 @@ def get_session(user_id):
     # if not db:
     #     db = get_db()
     db = get_db()
-    query = "SELECT session_key FROM sessions WHERE user_id = %s LIMIT 1"
+    query = "SELECT session_key FROM session WHERE user_id = %s LIMIT 1"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (user_id))
+            cursor.execute(query, (user_id,))
             session_key = cursor.fetchone()
             cursor.close()
         except Exception as err:
@@ -107,10 +107,10 @@ def remove_session(user_id) -> bool:
     # if not db:
     #     db = get_db()
     db = get_db()
-    query = "DELETE FROM sessions WHERE user_id = %s"
+    query = "DELETE FROM session WHERE user_id = %s"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (user_id))
+            cursor.execute(query, (user_id,))
             db.commit()
             cursor.close()
             return True
@@ -125,11 +125,11 @@ def get_user_from_session(session_key):
     # if not db:
     #     db = get_db()
     db = get_db()
-    query = "SELECT user_id FROM sessions WHERE session_key = " + session_key + " LIMIT 1"
+    query = "SELECT user_id FROM session WHERE session_key = %s LIMIT 1"
     with db.cursor() as cursor:
         try:
             # cursor.execute(query, (session_key))
-            cursor.execute(query)
+            cursor.execute(query, (session_key,))
             user_id = cursor.fetchone()
             cursor.close()
         except Exception as err:
@@ -170,7 +170,7 @@ def get_user(user_id):
     query = "SELECT * FROM users WHERE id = %s LIMIT 1"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (user_id))
+            cursor.execute(query, (user_id,))
             user = cursor.fetchone()
             cursor.close()
         except Exception as err:
@@ -182,7 +182,7 @@ def get_user(user_id):
     query = "UPDATE users SET last_accessed = NOW() WHERE id = %s"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (user_id))
+            cursor.execute(query, (user_id,))
             db.commit()
             cursor.close()
         except Exception as err:
@@ -238,7 +238,7 @@ def get_most_recent_users(limit = 10):
     query = "SELECT * FROM users ORDER BY last_accessed DESC LIMIT %s"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (limit))
+            cursor.execute(query, (limit,))
             users = cursor.fetchall()
             cursor.close()
         except Exception as err:
@@ -297,7 +297,7 @@ def get_user_privileges(user_id):
     query = "SELECT level FROM privileges WHERE user_id = %s LIMIT 1"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (user_id))
+            cursor.execute(query, (user_id,))
             privileges = cursor.fetchone()
             cursor.close()
         except Exception as err:
@@ -317,7 +317,7 @@ def get_user_search_history(user_id):
     query = "SELECT * FROM search_history WHERE user_id = %s"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (user_id))
+            cursor.execute(query, (user_id,))
             search_history = cursor.fetchall()
             cursor.close()
         except Exception as err:
@@ -391,7 +391,7 @@ def get_most_recent_search_history(limit = 10):
     query = "SELECT * FROM search_history ORDER BY last_accessed DESC LIMIT %s"
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (limit))
+            cursor.execute(query, (limit,))
             search_history = cursor.fetchall()
             cursor.close()
         except Exception as err:
