@@ -55,6 +55,7 @@ def close_db(e=None):
 
 # Print psycopg2 errors
 def print_exception(err):
+    '''
     err_type, err_obj, traceback = sys.exc_info()
     line_num = traceback.tbl_lineno
     print(f"\npsycopg2.DatabaseError: {err} on line {line_num}")
@@ -62,6 +63,8 @@ def print_exception(err):
     print(f"psycopg2.Diagnostics: {err.diag}")
     print(f"psycopg2.pgerror: {err.pgerror}")
     print(f"psycopg2.pgcode: {err.pgcode}\n")
+    '''
+    pass
 
 """ SESSION FUNCTIONS """
 
