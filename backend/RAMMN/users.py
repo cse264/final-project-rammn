@@ -8,9 +8,11 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 
 @bp.route('/')
 def get_user():
-    if uid != session["store"][request.cookies.get("session")]:
-        return abort(403)
-    return db.get_user(session["store"][request.cookies.get("session")])
+    user_id = db.get_user_from_session(request.cookies.get("session"))
+    user = db.get_user(user_id)
+    if not user:
+        return abort(404)
+    return user
 
 @bp.route('/activity')
 def get_recent_users():
@@ -22,11 +24,11 @@ def get_users_by_most_searches():
 
 @bp.route('/privileges')
 def get_user_privileges():
-    return db.get_user_privileges(session["store"][request.cookies.get("session")])
+    return db.get_user_privileges(db.get_user_from_session(request.cookies.get("session")))
 
 @bp.route('/history', methods = ['POST', 'GET'])
 def user_history():
-    uid = session["store"][request.cookies.get("session")]
+    uid = db.get_user_from_session(request.cookies.get("session"))
     if request.method == 'GET':
         return db.get_user_search_history(uid)
     else:
@@ -39,5 +41,5 @@ def users_history():
 @bp.before_request
 def before_request():
     session_id = request.cookies.get('session')
-    if (session_id not in session["store"]):
+    if not db.get_user_from_session(session_id):
         abort(403)

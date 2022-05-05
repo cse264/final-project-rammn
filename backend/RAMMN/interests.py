@@ -3,7 +3,7 @@ from flask import (
 )
 
 from RAMMN import db
-from RAMMN import cache
+# from RAMMN import cache
 
 bp = Blueprint('interests', __name__, url_prefix='/interests')
 
@@ -16,10 +16,10 @@ def get_interests():
 
 @bp.route('/user/')
 def add_user_interest():
-    return add_user_interest(session["store"][request.cookies.get("session")], request.form["interests"])
+    return add_user_interest(db.get_user_from_session(request.cookies.get("session")), request.form["interests"])
 
 @bp.before_request
 def before_request():
     session_id = request.cookies.get('session')
-    if not cache.get(session_id):
+    if not db.get_user_from_session(session_id):
         abort(403)

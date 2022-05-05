@@ -8,7 +8,7 @@ from flask import (
 )
 
 from RAMMN import db
-from RAMMN import cache
+# from RAMMN import cache
 from RAMMN.AuthFactory import AuthenticatorFactory
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -31,9 +31,9 @@ def reddit_callback():
 
     state = request.args.get('state', '')
 
-    if not cache.get(state):
-        # Uh-oh, this request wasn't started by us!
-        abort(403)
+    # if not cache.get(state):
+    #     # Uh-oh, this request wasn't started by us!
+    #     abort(403)
 
     code = request.args.get('code')
 
@@ -41,12 +41,18 @@ def reddit_callback():
 
     user = reddit_auth.get_user(access_token)
 
-    if not db.get_user(user["id"]):
+    session = db.get_session(user["id"])
+
+    # this implements unsafe upsert
+    if not session:
+        session = str(uuid4())
         db.add_user(user["id"], user["name"])
+        if(not db.add_session(user["id"], session)):
+            # not sure this is the best return code
+            abort(403)
+
 
     # return access token and set cookie for session store with expiration time less than 1 hour
-
-    session = str(uuid4())
 
     resp = make_response(jsonify(), 200)
 
@@ -55,7 +61,7 @@ def reddit_callback():
 
     resp.set_cookie('session', session, expires=expire_time)
 
-    cache.set(session, user.id)
+    # cache.set(session, user.id)
 
     resp.set_data(access_token)
 

@@ -3,7 +3,7 @@ import requests
 import requests.auth
 
 from RAMMN.ExternalAPIAuthenticator import ExternalAPIAuthenticator
-from RAMMN import cache
+# from RAMMN import cache
 
 class RedditAuthenticator(ExternalAPIAuthenticator):
     '''
@@ -26,9 +26,9 @@ class RedditAuthenticator(ExternalAPIAuthenticator):
 
         # Note: this number should be randomized in the future
         from uuid import uuid4
-        state = str(uuid4())
+        state = 5 #str(uuid4())
 
-        cache.set(state, "valid")
+        # cache.set(state, "valid")
 
         params = {"client_id": self.__secerts["REDDIT_OAUTH"]["CLIENT_ID"],
                   "response_type": "code",
