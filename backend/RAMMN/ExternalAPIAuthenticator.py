@@ -15,7 +15,7 @@ class ExternalAPIAuthenticator:
         if(not secerts):
             raise ValueError(secerts)
 
-        self.__secerts = secerts
+        self._secerts = secerts
         '''secerts hold any API key information needed by the authenticator'''
 
     def set_secerts(self, dict) -> None:
@@ -23,7 +23,7 @@ class ExternalAPIAuthenticator:
         Set the external API secert for future calls.\n
         Invalid secerts may throw HTTP request related errors.\n
         Returns 'None'.'''
-        self.__secerts = dict
+        self._secerts = dict
         return
 
     def validate_credentials() -> bool:
