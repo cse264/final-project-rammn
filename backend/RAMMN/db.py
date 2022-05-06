@@ -261,7 +261,7 @@ def get_users_by_total_search_history(limit = 10):
             GROUP BY users.id ORDER BY count(*) DESC LIMIT %s" 
     with db.cursor() as cursor:
         try:
-            cursor.execute(query, (limit))
+            cursor.execute(query, (limit,))
             users = cursor.fetchall()
             cursor.close()
         except Exception as err:
