@@ -4,7 +4,7 @@ from uuid import uuid4
 import datetime
 
 from flask import (
-    Blueprint, g, jsonify, request, session, abort, make_response, render_template
+    Blueprint, g, jsonify, redirect, request, session, abort, make_response, render_template
 )
 
 from RAMMN import db
@@ -56,11 +56,10 @@ def reddit_callback():
 
     # return access token and set cookie for session store with expiration time less than 1 hour
 
-    resp = make_response(render_template('index.html'))
+    resp = make_response(redirect('/'))
 
 
-    expire_time = datetime.datetime.now()
-    expire_time = datetime.timedelta(hours=1)
+    expire_time = datetime.datetime.now() + datetime.timedelta(hours=1)
 
     resp.set_cookie('session', session, expires=expire_time)
     resp.set_cookie('access_token', access_token, expires=expire_time)
