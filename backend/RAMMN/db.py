@@ -41,7 +41,6 @@ def get_db():
         except psycopg2.DatabaseError as e:
             print(e, file=sys.stderr)
             raise e
-    # db = g.db
     return g.db
 
 # Close database connection
@@ -64,15 +63,12 @@ def print_exception(err):
     print(f"psycopg2.pgerror: {err.pgerror}")
     print(f"psycopg2.pgcode: {err.pgcode}\n")
     '''
-    pass
+    print(f"psycopg2.DatabaseError")
 
 """ SESSION FUNCTIONS """
 
 # Add session
 def add_session(user_id, session_key) -> bool:
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "INSERT INTO session (user_id, session_key) VALUES (%s, %s)"
     with db.cursor() as cursor:
@@ -88,9 +84,6 @@ def add_session(user_id, session_key) -> bool:
             return False
 
 def get_session(user_id):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "SELECT session_key FROM session WHERE user_id = %s LIMIT 1"
     with db.cursor() as cursor:
@@ -106,9 +99,6 @@ def get_session(user_id):
     return session_key
 
 def remove_session(user_id) -> bool:
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "DELETE FROM session WHERE user_id = %s"
     with db.cursor() as cursor:
@@ -124,9 +114,6 @@ def remove_session(user_id) -> bool:
             return False
 
 def get_user_from_session(session_key):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "SELECT user_id FROM session WHERE session_key = %s LIMIT 1"
     with db.cursor() as cursor:
@@ -146,9 +133,6 @@ def get_user_from_session(session_key):
 
 # Add user
 def add_user(user_id, username):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "INSERT INTO users (id, username) VALUES (%s, %s)"
     with db.cursor() as cursor:
@@ -165,12 +149,11 @@ def add_user(user_id, username):
 
 # Get user information
 def get_user(user_id):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     # Get user information
-    query = "SELECT * FROM users WHERE id = %s LIMIT 1"
+    query = "SELECT id, username, \
+        TO_CHAR(last_accessed, 'MM-DD-YYYY HH:MI AM') AS last_accessed \
+            FROM users WHERE id = %s LIMIT 1"
     with db.cursor() as cursor:
         try:
             cursor.execute(query, (user_id,))
@@ -197,9 +180,6 @@ def get_user(user_id):
 
 # Get all users
 def get_all_users():
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "SELECT * FROM users"
     with db.cursor() as cursor:
@@ -215,9 +195,6 @@ def get_all_users():
 
 # Get count of users
 def get_users_count():
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "SELECT COUNT(*) FROM users"
     with db.cursor() as cursor:
@@ -234,11 +211,10 @@ def get_users_count():
 
 # Get most recent users
 def get_most_recent_users(limit = 10):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
-    query = "SELECT * FROM users ORDER BY last_accessed DESC LIMIT %s"
+    query = "SELECT id, username, \
+        TO_CHAR(last_accessed, 'MM-DD-YYYY HH:MI AM') AS last_accessed \
+            FROM users ORDER BY last_accessed DESC LIMIT %s"
     with db.cursor() as cursor:
         try:
             cursor.execute(query, (limit,))
@@ -252,13 +228,11 @@ def get_most_recent_users(limit = 10):
 
 # Get users by top total search history
 def get_users_by_total_search_history(limit = 10):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
-    query = "SELECT users.id, COUNT(*) FROM users \
-        LEFT JOIN search_history ON users.id = search_history.user_id \
-            GROUP BY users.id ORDER BY count(*) DESC LIMIT %s" 
+    query = "SELECT users.username, COUNT(*) \
+        FROM users LEFT JOIN search_history \
+            ON users.id = search_history.user_id \
+                GROUP BY users.id ORDER BY count(*) DESC LIMIT %s" 
     with db.cursor() as cursor:
         try:
             cursor.execute(query, (limit))
@@ -274,9 +248,6 @@ def get_users_by_total_search_history(limit = 10):
 
 # Set user privileges
 def set_user_privileges(user_id, level):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "UPDATE privileges (level) VALUES (%s) WHERE user_id = %s"
     with db.cursor() as cursor:
@@ -293,9 +264,6 @@ def set_user_privileges(user_id, level):
 
 # Get user privileges
 def get_user_privileges(user_id):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "SELECT level FROM privileges WHERE user_id = %s LIMIT 1"
     with db.cursor() as cursor:
@@ -313,11 +281,11 @@ def get_user_privileges(user_id):
 
 # Get search history by user
 def get_user_search_history(user_id):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
-    query = "SELECT * FROM search_history WHERE user_id = %s"
+    query = "select username, search, \
+        TO_CHAR(timestamp, 'MM-DD-YYYY HH:MI AM') AS timestamp \
+            FROM search_history LEFT JOIN users \
+                ON search_history.user_id = users.id where user_id= %s"
     with db.cursor() as cursor:
         try:
             cursor.execute(query, (user_id,))
@@ -331,9 +299,6 @@ def get_user_search_history(user_id):
 
 # Add user search history
 def add_user_search_history(user_id, search_term):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "INSERT INTO search_history (user_id, search) VALUES (%s, %s)"
     with db.cursor() as cursor:
@@ -350,11 +315,11 @@ def add_user_search_history(user_id, search_term):
 
 # Get all search history
 def get_all_search_history():
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
-    query = "SELECT * FROM search_history"
+    query = "SELECT username, search, \
+        TO_CHAR(timestamp, 'MM-DD-YYYY HH:MI AM') AS timestamp \
+            FROM search_history LEFT JOIN users \
+                ON search_history.user_id = users.id"
     with db.cursor() as cursor:
         try:
             cursor.execute(query)
@@ -368,9 +333,6 @@ def get_all_search_history():
 
 # Get count of search history
 def get_search_history_count():
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "SELECT COUNT(*) FROM search_history"
     with db.cursor() as cursor:
@@ -387,11 +349,11 @@ def get_search_history_count():
 
 # Get search history, sorted by most recent
 def get_most_recent_search_history(limit = 10):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
-    query = "SELECT * FROM search_history ORDER BY last_accessed DESC LIMIT %s"
+    query = "select username, search, \
+        TO_CHAR(timestamp, 'MM-DD-YYYY HH:MI AM') AS timestamp \
+            FROM search_history LEFT JOIN users \
+                ON search_history.user_id = users.id LIMIT %s"
     with db.cursor() as cursor:
         try:
             cursor.execute(query, (limit,))
@@ -407,9 +369,6 @@ def get_most_recent_search_history(limit = 10):
 
 # Get all unique interests
 def get_all_interests():
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     query = "SELECT DISTINCT interest, description FROM interests"
     with db.cursor() as cursor:
@@ -425,9 +384,6 @@ def get_all_interests():
 
 # Add interest
 def add_interest(interest, description = None):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     if description is None:
         query = "INSERT INTO interests (interest) VALUES (%s)"
@@ -447,9 +403,6 @@ def add_interest(interest, description = None):
 
 # Add user interests
 def add_user_interests(user_id, interests):
-    # global db
-    # if not db:
-    #     db = get_db()
     db = get_db()
     interest_query = "SELECT id FROM interests WHERE interest = %s LIMIT 1"
     query = "INSERT INTO user_interests (user_id, interest) VALUES (%s, %s)"
