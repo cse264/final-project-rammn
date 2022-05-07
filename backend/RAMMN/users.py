@@ -41,11 +41,11 @@ def users_search_history():
 
 @bp.route('/searches')
 def users_searches():
-    return json.dumps(db.get_search_history_count())
+    return str(db.get_search_history_count()[0])
 
 @bp.route('/count')
 def users_count():
-    return json.dumps(db.get_users_count())
+    return str(db.get_users_count()[0])
 
 # @bp.before_request
 # def before_request():

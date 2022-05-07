@@ -1,5 +1,6 @@
 from uuid import uuid4
 import datetime
+import time
 
 from flask import (
     Blueprint, redirect, render_template, abort, request, session, make_response
@@ -39,14 +40,16 @@ def get_sample():
                 else:
                     session = session[0]
                 
-                expire_time = datetime.datetime.now() + datetime.timedelta(hours=1)
+                expire_time = time.time() + 3600
 
                 resp = make_response(redirect('/#/Home'))
 
-                resp.set_cookie('session', session, expires=expire_time)
-                resp.set_cookie('access_token', access_token, expires=expire_time)
+                resp.set_cookie('session', session, expire_time)
+                resp.set_cookie('access_token', access_token, expire_time)
+                print(session)
+                print(access_token)
 
-                return resp
+                return resp, status
 
             else:
                 state = 403

@@ -18,7 +18,7 @@ def get_auth_link():
 
     reddit_auth = AuthenticatorFactory().get_authenticator("REDDIT")
 
-    return reddit_auth.make_authorization_url()
+    return jsonify(reddit_auth.make_authorization_url())
 
 @bp.route('/reddit_callback')
 def reddit_callback():
