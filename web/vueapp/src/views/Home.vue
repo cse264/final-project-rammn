@@ -30,7 +30,7 @@
     <CRow :xs="{ cols: 1, gutter: 4 }" :md="{ cols: 3}">
       <CCol xs v-for="item in results" :key="item.name">
         <CCard class="h-100">
-          <CCardImage orientation="top" :src="item.pic"/>
+          <CCardImage orientation="top" :src="item.image"/>
           <CCardBody>
             <CCardTitle>{{ item.title }}</CCardTitle>
             <CCardText>{{ item.description }}</CCardText>
@@ -55,45 +55,17 @@ export default {
   },
   data() {
     var results = []
+    var searches = 1
     return {
       results,
+      searches,
     }
   },
   methods: {
-    search() {
-      console.log("pressed");
-      this.results = [
-        {
-          title: "Test Post",
-          description: "Info about the test post",
-          link: "https://reddit.com",
-          pic: "/images/logo.png",
-        },
-        {
-          title: "Test Post",
-          description: "Info about the test post",
-          link: "https://reddit.com",
-          pic: "/images/logo.png",
-        },
-        {
-          title: "Test Post",
-          description: "Info about the test post",
-          link: "https://reddit.com",
-          pic: "/images/logo.png",
-        },
-        {
-          title: "Test Post",
-          description: "Info about the test post",
-          link: "https://reddit.com",
-          pic: "/images/logo.png",
-        },
-      ]
+    async search() {
+      this.results = await fetch("/reddit/" + this.searches).then(response => response.json()).then(data => data);
+      this.searches = this.searches + 1;
     },
   },
-  // watch: {
-  //   results(newresults, oldresults) {
-      
-  //   }
-  // },
 }
 </script>

@@ -51,7 +51,7 @@ export default {
     var loggedin = false;
     var button = true;
     var admin = false;
-    var username = "u/test123";
+    var username = "u/lehigh-jac222";
     return {
       loggedin,
       button,
@@ -60,11 +60,13 @@ export default {
     }
   },
   methods: {
-    login() {
+    async login() {
       console.log("logged in");
       this.loggedin = true;
       this.button = false;
       this.admin = true;
+      // var link = await fetch('/auth').then(response => response.json()).then(data => data);
+      // window.open(link);
     },
   }
 }

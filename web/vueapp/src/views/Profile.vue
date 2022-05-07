@@ -15,10 +15,10 @@
               <CTableBody>
                 <CTableRow v-for="item in interests" :key="item.name">
                   <CTableDataCell>
-                    <div>{{ item.user }}</div>
+                    <div>{{ item.subreddit }}</div>
                   </CTableDataCell>
                   <CTableDataCell>
-                    <div>{{ item.search }}</div>
+                    <div>{{ item.description }}</div>
                   </CTableDataCell>
                 </CTableRow>
               </CTableBody>
@@ -35,10 +35,10 @@
             <CCol :md="8">
               <CCardBody>
                 <CCardTitle>{{ username }}</CCardTitle>
-                <CCardText>User: </CCardText>
-                <CCardText>Name: </CCardText>
-                <CCardText>Account Age: </CCardText>
-                <CCardText>Etc: </CCardText>
+                <CCardText>Username: u/lehigh-jac222</CCardText>
+                <CCardText>Karma: 1</CCardText>
+                <CCardText>Account Age: 11h</CCardText>
+                <CCardText>Bio: test123</CCardText>
               </CCardBody>
             </CCol>
           </CRow>
@@ -87,84 +87,68 @@
 export default {
   name: 'Profile',
   setup() {
-    const profile = "https://reddit.com";
-    const photo = "asdf";
-    const username = "test123";
+    const profile = "https://www.reddit.com/user/lehigh-jac222";
+    const photo = "https://i.redd.it/snoovatar/avatars/b2c68f85-e46a-4fbc-b24f-f8cc4c3dff53.png";
+    const username = "jac222";
     const interests = [
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        subreddit: 'r/News',
+        description: 'The place for news articles about current events in the United States and the rest of the world. Discuss it all here.',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        subreddit: 'r/Pics',
+        description: 'A place for pictures and photographs.',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
-      },
-      {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
-      },
-      {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
-      },
-      {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
-      },
-      {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        subreddit: 'r/Politics',
+        description: '/r/Politics is for news and discussion about U.S. politics.',
       },
     ]
 
     const recentSearches = [
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        search: 'https://i.redd.it/zaqxjbuvwdx81.jpg',
+        time: '2022-05-04 12:51:07',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        search: 'https://i.redd.it/0i9mv63c7la31.jpg',
+        time: '2022-05-04 12:51:07',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        search: 'https://www.reddit.com/r/AskReddit/comments/uhze53/whats_stopping_you_from_having_sex/',
+        time: '2022-05-04 12:51:07',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        search: 'https://i.redd.it/gzvw9bb7psw81.jpg',
+        time: '2022-05-04 12:51:07',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        search: 'https://www.reddit.com/live/18hnzysb1elcs',
+        time: '2022-05-04 12:51:07',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        search: 'https://v.redd.it/l0e20b6ktdx81',
+        time: '2022-05-04 12:51:07',
       },
       {
-        user: 'Yiorgos Avraamu',
-        search: 'redditpost link',
-        activity: '1/1/2022',
+        search: 'https://www.reddit.com/gallery/ui51zq',
+        time: '2022-05-04 12:39:23',
+      },
+      {
+        search: 'https://v.redd.it/s02clyst7fx81',
+        time: '2022-05-04 12:39:23',
+      },
+      {
+        search: 'https://www.reddit.com/r/AskReddit/comments/ui2a0b/what_is_your_goto_small_talk_topic_with_strangers/',
+        time: '2022-05-04 12:39:23',
+      },
+      {
+        search: 'https://itsgoingdown.org/anarchist-and-autonomous-formations-hit-the-streets-of-mexico-city-on-may-day/',
+        time: '2022-05-04 12:39:23',
       },
     ]
+    // fetch('/users/history').then(response => response.json()).then(data => data);
+    // console.log(recentSearches);
 
     return {
       interests,
