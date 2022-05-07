@@ -111,119 +111,41 @@
 export default {
   name: 'Dashboard',
   async data() {
-    var numUsers = 31;
-    var numSearches = 65;
+    var numUsers = await fetch("/users/count").then(response => response.json()).then(data => data);
+    console.log(numUsers);
+    var numSearches = await fetch("/users/searches").then(response => response.json()).then(data => data);
+    console.log(numSearches);
+
+    var recentSearches = []
+    var temp1 = await fetch("/users/search/history").then(response => response.json()).then(data => data);
+    console.log(temp1);
+    for (let i = 0; i < temp1.length; i++) {
+      recentSearches.push({});
+      recentSearches[i].user = temp1[i][0];
+      recentSearches[i].search = temp1[i][1];
+      recentSearches[i].time = temp1[i][2];
+    }
+    var recentUsers = []
+    var temp2 = await fetch("/users/activity").then(response => response.json()).then(data => data);
+    console.log(temp2);
+    for (let i = 0; i < temp2.length; i++) {
+      recentUsers.push({});
+      recentUsers[i].id = temp2[i][0];
+      recentUsers[i].user = temp2[i][1];
+      recentUsers[i].time = temp2[i][2];
+    }
+    // var topUsers = []
+    // var temp3 = await fetch("/users/volume").then(response => response.json()).then(data => data);
+    // console.log(temp3);
     return {
       numUsers,
       numSearches,
+      recentSearches,
+      recentUsers,
+      // topUsers,
     }
   },
   setup() {
-    const recentSearches = [
-      {
-        user: '5e91a',
-        search: 'https://i.redd.it/zaqxjbuvwdx81.jpg',
-        time: '2022-05-04 12:51:07',
-      },
-      {
-        user: '5e91a',
-        search: 'https://i.redd.it/0i9mv63c7la31.jpg',
-        time: '2022-05-04 12:51:07',
-      },
-      {
-        user: '5e91a',
-        search: 'https://www.reddit.com/r/AskReddit/comments/uhze53/whats_stopping_you_from_having_sex/',
-        time: '2022-05-04 12:51:07',
-      },
-      {
-        user: '5e91a',
-        search: 'https://i.redd.it/gzvw9bb7psw81.jpg',
-        time: '2022-05-04 12:51:07',
-      },
-      {
-        user: '5e91a',
-        search: 'https://www.reddit.com/live/18hnzysb1elcs',
-        time: '2022-05-04 12:51:07',
-      },
-      {
-        user: '5e91a',
-        search: 'https://v.redd.it/l0e20b6ktdx81',
-        time: '2022-05-04 12:51:07',
-      },
-      {
-        user: '86fb8',
-        search: 'https://www.reddit.com/gallery/ui51zq',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        user: '86fb8',
-        search: 'https://v.redd.it/s02clyst7fx81',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        user: '86fb8',
-        search: 'https://www.reddit.com/r/AskReddit/comments/ui2a0b/what_is_your_goto_small_talk_topic_with_strangers/',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        user: '86fb8',
-        search: 'https://itsgoingdown.org/anarchist-and-autonomous-formations-hit-the-streets-of-mexico-city-on-may-day/',
-        time: '2022-05-04 12:39:23',
-      },
-    ]
-
-    const recentUsers = [
-      {
-        id: '5e91a',
-        user: 'cpattissons',
-        time: '2022-05-04 12:51:07',
-      },
-      {
-        id: '86fb8',
-        user: 'gshergoldt',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: '540b9',
-        user: 'wdater',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: 'ec155',
-        user: 'clightbournq',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: 'e00cc',
-        user: 'aantrago',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: 'd505e',
-        user: 'bjukubczakn',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: '5e95b',
-        user: 'dcoughlanm',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: '7370e',
-        user: 'aoluneyl',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: '5070e',
-        user: 'jdowlingj',
-        time: '2022-05-04 12:39:23',
-      },
-      {
-        id: 'f5afc',
-        user: 'biacopettig',
-        time: '2022-05-04 12:39:23',
-      },
-    ]
 
     const topUsers = [
       {
@@ -269,8 +191,6 @@ export default {
     ]
 
     return {
-      recentSearches,
-      recentUsers,
       topUsers,
     }
   },
