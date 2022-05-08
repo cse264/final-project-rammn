@@ -45,7 +45,7 @@ def reddit(num):
       results[i]["link"] = post["data"]["children"][num - 1]["data"]["url"]
       try:
         cookie = { 'access_token': str(request.cookies.get("access_token")) }
-        r = requests.get('http://127.0.0.1:5000/reddit/profile', cookies = cookie).json()
+        r = requests.get('https://rammn.herokuapp.com/reddit/profile', cookies = cookie).json()
         id = r["id"]
         db.add_user_search_history(id, results[i]["link"])
       except Exception as e:
