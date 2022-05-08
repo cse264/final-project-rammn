@@ -14,6 +14,24 @@
       </CHeaderNav>
       <CHeaderNav>
         <CNavItem>
+          <div v-show="loggedin">
+            <CButton v-show="adminoff" color="secondary" shape="rounded-pill" @click="perms">
+              <CRow class="align-items-center">
+                <div align="center">
+                  <strong>Turn Admin On</strong>
+                </div>
+              </CRow>
+            </CButton>
+            <CButton v-show="adminon" color="secondary" shape="rounded-pill" @click="perms">
+              <CRow class="align-items-center">
+                <div align="center">
+                  <strong>Turn Admin Off</strong>
+                </div>
+              </CRow>
+            </CButton>
+          </div>
+        </CNavItem>
+        <CNavItem>
           <CButton v-show="button" color="primary" shape="rounded-pill" @click="login">
             <CRow class="align-items-center">
               <div align="center">
@@ -51,7 +69,9 @@ export default {
     return {
       loggedin: false,
       button: true,
-      admin: true,
+      admin: false,
+      adminon: false,
+      adminoff: true,
       profile: {},
       timer: "",
     }
@@ -65,8 +85,12 @@ export default {
       var link = await fetch('/auth').then(response => response.json()).then(data => data);
       window.location.href = link;
     },
+    async perms() {
+      this.admin = !this.admin;
+      this.adminon = !this.adminon;
+      this.adminoff = !this.adminoff;
+    },
     async fetchData() {
-      console.log(this.$cookies.get("access_token"));
       if (this.$cookies.get("access_token")) {
         this.loggedin = true;
         this.button = false;

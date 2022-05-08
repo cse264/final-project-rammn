@@ -55,12 +55,10 @@ def reddit(num):
 @bp.route('/interests')
 def interests():
   interests = []
-  # token = 'asdf'
-  # headers = { 'User-agent': 'RAMMN', 'Authorization': 'Bearer ' + token }
-  # res = requests.get("https://www.reddit.com/subreddits/mine/subscriber.json", headers = headers).json()
-  # for i in range(len(res["data"]["children"])):
-  #   interests.append({})
-  #   interests[i]["subreddit"] = res["data"]["children"][i]["data"]["display_name_prefixed"]
-  #   interests[i]["description"] = res["data"]["children"][i]["data"]["public_description"]
-  # return json.dumps(interests)
-  return json.dumps(["politics", "test"])
+  headers = { 'User-agent': 'Boredle' }
+  res = requests.get("https://api.reddit.com/subreddits/popular.json?limit=6", headers = headers).json()
+  for i in range(len(res["data"]["children"])):
+    interests.append(["", ""])
+    interests[i][0] = res["data"]["children"][i]["data"]["display_name_prefixed"]
+    interests[i][1] = res["data"]["children"][i]["data"]["public_description"]
+  return json.dumps(interests)
