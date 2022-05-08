@@ -2,6 +2,7 @@ from flask import (
     Blueprint, request, session, abort
 )
 
+from RAMMN import db
 import requests
 import json
 import time
@@ -11,7 +12,7 @@ bp = Blueprint('reddit', __name__, url_prefix='/reddit')
 @bp.route('/profile')
 def profile():
   profile = {}
-  token = '1778087909870-Zbo6lvGydgQqoYUCXu6h4aspbKfEGA'
+  token = str(request.cookies.get("access_token"))
   headers = { 'User-agent': 'RAMMN', 'Authorization': 'Bearer ' + token }
   res = requests.get("https://oauth.reddit.com/api/v1/me.json", headers = headers).json()
   profile["display_name"] = res["subreddit"]["title"]
@@ -42,16 +43,24 @@ def reddit(num):
       results[i]["title"] = post["data"]["children"][num - 1]["data"]["title"]
       results[i]["description"] = post["data"]["children"][num - 1]["data"]["selftext"]
       results[i]["link"] = post["data"]["children"][num - 1]["data"]["url"]
+      try:
+        cookie = { 'access_token': str(request.cookies.get("access_token")) }
+        r = requests.get('http://127.0.0.1:5000/reddit/profile', cookies = cookie).json()
+        id = r["id"]
+        db.add_user_search_history(id, results[i]["link"])
+      except Exception as e:
+        db.add_user_search_history("null", results[i]["link"])
     return json.dumps(results)
 
 @bp.route('/interests')
 def interests():
   interests = []
-  token = 'asdf'
-  headers = { 'User-agent': 'RAMMN', 'Authorization': 'Bearer ' + token }
-  res = requests.get("https://www.reddit.com/subreddits/mine/subscriber.json", headers = headers).json()
-  for i in range(len(res["data"]["children"])):
-    interests.append({})
-    interests[i]["subreddit"] = res["data"]["children"][i]["data"]["display_name_prefixed"]
-    interests[i]["description"] = res["data"]["children"][i]["data"]["public_description"]
-  return json.dumps(interests)
+  # token = 'asdf'
+  # headers = { 'User-agent': 'RAMMN', 'Authorization': 'Bearer ' + token }
+  # res = requests.get("https://www.reddit.com/subreddits/mine/subscriber.json", headers = headers).json()
+  # for i in range(len(res["data"]["children"])):
+  #   interests.append({})
+  #   interests[i]["subreddit"] = res["data"]["children"][i]["data"]["display_name_prefixed"]
+  #   interests[i]["description"] = res["data"]["children"][i]["data"]["public_description"]
+  # return json.dumps(interests)
+  return json.dumps(["politics", "test"])

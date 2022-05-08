@@ -22,7 +22,7 @@
             </CRow>
           </CButton>
           <div v-show="loggedin" align="right">
-            <CNavLink href="#/profile">Logged in as {{ username }}</CNavLink>
+            <CNavLink href="#/profile">Logged in as {{ profile.username }}</CNavLink>
           </div>
         </CNavItem>
       </CHeaderNav>
@@ -48,25 +48,42 @@ export default {
     }
   },
   data() {
-    var loggedin = false;
-    var button = true;
-    var admin = true;
-    var username = "u/lehigh-jac222";
     return {
-      loggedin,
-      button,
-      username,
-      admin,
+      loggedin: false,
+      button: true,
+      admin: true,
+      profile: {},
+      timer: "",
     }
+  },
+  created() {
+    this.fetchData();
+    this.timer = setInterval(this.fetchData, 60000);
   },
   methods: {
     async login() {
-      console.log("logged in");
-      this.loggedin = true;
-      this.button = false;
       var link = await fetch('/auth').then(response => response.json()).then(data => data);
       window.location.href = link;
     },
-  }
+    async fetchData() {
+      console.log(this.$cookies.get("access_token"));
+      if (this.$cookies.get("access_token")) {
+        this.loggedin = true;
+        this.button = false;
+        this.profile = await fetch("/reddit/profile").then(response => response.json()).then(data => data);
+      }
+      else {
+        this.loggedin = false;
+        this.button = true;
+      }
+      // this.admin
+    },
+    cancelAutoUpdate() {
+      clearInterval(this.timer);
+    },
+  },
+  beforeUnmount() {
+    this.cancelAutoUpdate();
+  },
 }
 </script>

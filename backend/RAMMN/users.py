@@ -4,6 +4,7 @@ from flask import (
 
 from RAMMN import db
 import json
+import requests
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -27,13 +28,9 @@ def get_users_by_most_searches():
 def get_user_privileges():
     return json.dumps(db.get_user_privileges(db.get_user_from_session(request.cookies.get("session"))))
 
-@bp.route('/history', methods = ['POST', 'GET'])
-def user_history():
-    uid = db.get_user_from_session(request.cookies.get("session"))
-    if request.method == 'GET':
-        return db.get_user_search_history(uid)
-    else:
-        return db.add_user_search_history(uid, request.form["search_term"])
+@bp.route('/history/<string:id>')
+def user_history(id):
+    return json.dumps(db.get_user_search_history(id))
 
 @bp.route('/search/history')
 def users_search_history():
